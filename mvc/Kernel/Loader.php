@@ -150,6 +150,7 @@ class Loader extends ContainerAware
         {
             if ( !$that->getWebHandler() )
             {
+                $previousDir = getcwd();
                 chdir( $legacyRootDir );
 
                 $legacyParameters = new ParameterBag( $defaultLegacyOptions );
@@ -175,7 +176,7 @@ class Loader extends ContainerAware
                 $that->setWebHandler( new $webHandlerClass( $legacyParameters->all() ) );
                 // Fix up legacy URI for global use cases (i.e. using runCallback()).
                 $uriHelper->updateLegacyURI( $request );
-                chdir( $webrootDir );
+                chdir( $previousDir );
             }
 
             return $that->getWebHandler();
@@ -215,6 +216,7 @@ class Loader extends ContainerAware
         {
             if ( !$that->getCLIHandler() )
             {
+                $previousDir = getcwd();
                 chdir( $legacyRootDir );
 
                 $legacyParameters = new ParameterBag( $container->getParameter( 'ezpublish_legacy.kernel_handler.cli.options' ) );
@@ -226,7 +228,7 @@ class Loader extends ContainerAware
                 $that->setCLIHandler(
                     new CLIHandler( $legacyParameters->all(), $container->get( 'ezpublish.siteaccess' ), $container )
                 );
-                chdir( $webrootDir );
+                chdir( $previousDir );
             }
 
             return $that->getCLIHandler();
@@ -280,6 +282,7 @@ class Loader extends ContainerAware
         {
             if ( !$that->getRestHandler() )
             {
+                $previousDir = getcwd();
                 chdir( $legacyRootDir );
 
                 $legacyParameters = new ParameterBag();
@@ -298,7 +301,7 @@ class Loader extends ContainerAware
                 }
 
                 $that->setRestHandler( new ezpKernelRest( $legacyParameters->all(), 'eZ\Bundle\EzPublishLegacyBundle\Rest\ResponseWriter' ) );
-                chdir( $webrootDir );
+                chdir( $previousDir );
             }
 
             return $that->getRestHandler();
